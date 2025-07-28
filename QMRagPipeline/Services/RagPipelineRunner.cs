@@ -63,7 +63,7 @@ namespace QMRagPipeline.Services
             var questionEmbedding = await _embeddingService.GetEmbeddingAsync(question);
             var topChunks = await _similaritySearch.SearchAsync(questionEmbedding, topK: 5);
 
-            var prompt = _promptComposer.ComposePrompt(question, topChunks);
+            var prompt = _promptComposer.ComposeTurns(question, topChunks);
             var answer = await _llmService.GetAnswerAsync(prompt);
 
             return answer;

@@ -29,5 +29,40 @@ namespace QMRagPipeline.Services
 
             return sb.ToString();
         }
+
+        public List<ChatTurn> ComposeTurns(string userQuestion, List<EmbeddedChunk> contextChunks, List<ChatTurn>? chatHistory = null)
+        {
+            var result = new List<ChatTurn>();
+
+            result.Add(new ChatTurn
+            {
+                Role = AuthorRole.System,
+                Content = "You are a helpful assistant that answers only based on the given context. " +
+                      "If the answer is not in the context, respond: 'I don't know.'"
+            });
+
+            foreach (var chunk in contextChunks)
+            {
+                if (!string.IsNullOrWhiteSpace(chunk.Chunk.Content))
+                {
+                    result.Add(new ChatTurn
+                    {
+                        Role = AuthorRole.Assistant,
+                        Content = $"[context]: {chunk.Chunk.Content}"
+                    });
+                }
+            }
+
+            //if (chatHistory != null)
+            //    result.AddRange(chatHistory);
+
+            result.Add(new ChatTurn
+            {
+                Role = AuthorRole.User,
+                Content = userQuestion
+            });
+
+            return result;
+        }
     }
 }
