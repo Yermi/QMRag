@@ -39,9 +39,12 @@ namespace QMRagPipeline.Services
     
             var embedded = new List<EmbeddedChunk>();
 
+            int index = 1;
             foreach (var chunk in chunks)
             {
                 var embedding = await _embeddingService.GetEmbeddingAsync(chunk.Content);
+                Console.WriteLine($"[INFO] embeddings for chunk num: {index++} has created...");
+
                 embedded.Add(new EmbeddedChunk
                 {
                     Chunk = chunk,

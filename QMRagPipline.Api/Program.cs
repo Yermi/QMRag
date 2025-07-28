@@ -1,13 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using OpenAI;
 using QMRagPipeline.Interfaces;
 using QMRagPipeline.Services;
 using QMRagPipeline.Settings;
 
-var builder = Host.CreateApplicationBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -17,7 +14,6 @@ builder.Configuration
 builder.Services.Configure<OpenAiSettings>(builder.Configuration.GetSection("OpenAi"));
 builder.Services.Configure<DataSourceSettings>(builder.Configuration.GetSection("DataSource"));
 builder.Services.Configure<QdrantSettings>(builder.Configuration.GetSection("Qdrant"));
-
 builder.Services.AddHttpClient<ISimilaritySearch, QdrantRestSimilaritySearch>((sp, client) =>
 {
     var settings = sp.GetRequiredService<IOptions<QdrantSettings>>().Value;
@@ -25,13 +21,12 @@ builder.Services.AddHttpClient<ISimilaritySearch, QdrantRestSimilaritySearch>((s
     client.DefaultRequestHeaders.Add("api-key", settings.ApiKey);
 });
 
-builder.Services.AddSingleton<OpenAIClient>(sp =>
+builder.Services.AddScoped<OpenAIClient>(sp =>
 {
     var settings = sp.GetRequiredService<IOptions<OpenAiSettings>>().Value;
     return new OpenAIClient(settings.ApiKey);
 });
 
-// Register services (DI)
 builder.Services.AddScoped<IDataLoader>(sp =>
 {
     var filePath = sp.GetRequiredService<IOptions<DataSourceSettings>>().Value.TextFilePath;
@@ -39,23 +34,50 @@ builder.Services.AddScoped<IDataLoader>(sp =>
 });
 builder.Services.AddScoped<IEmbeddingService, OpenAiEmbeddingService>();
 //builder.Services.AddScoped<ISimilaritySearch, QdrantRestSimilaritySearch>();
-builder.Services.AddSingleton<IPromptComposer, DefaultPromptComposer>();
-builder.Services.AddSingleton<ILlmService, OpenAiLlmService>();
-builder.Services.AddSingleton<RagPipelineRunner>();
+builder.Services.AddScoped<IPromptComposer, DefaultPromptComposer>();
+builder.Services.AddScoped<ILlmService, OpenAiLlmService>();
+builder.Services.AddScoped<RagPipelineRunner>();
 
-var host = builder.Build();
+// Add services to the container.
 
-var pipeline = host.Services.GetRequiredService<RagPipelineRunner>();
-await pipeline.BuildIndexAsync();
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-Console.WriteLine("[READY] Type your question:");
-while (true)
+builder.Services.AddCors(options =>
 {
-    Console.Write("> ");
-    var input = Console.ReadLine();
-    if (string.IsNullOrWhiteSpace(input)) continue;
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
-    var answer = await pipeline.AnswerQuestionAsync(input);
-    Console.WriteLine("\n[GPT-4o]\n" + answer);
-    Console.WriteLine("\n[Ask another question or Ctrl+C to exit]\n");
+var app = builder.Build();
+
+//var pipeline = app.Services.GetRequiredService<RagPipelineRunner>();
+//await pipeline.BuildIndexAsync();
+
+using (var scope = app.Services.CreateScope())
+{
+    var pipeline = scope.ServiceProvider.GetRequiredService<RagPipelineRunner>();
+    await pipeline.BuildIndexAsync();
 }
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+app.UseCors("AllowAll");
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMRagPipeline", "QMRagPipeline\QMRagPipeline.csproj", "{9E9F9888-3C06-4D3C-8DE9-7EA01B9DB8EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMRagPipline.Api", "QMRagPipline.Api\QMRagPipline.Api.csproj", "{262F31EA-DB44-4A24-8005-34E9FA903F6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9E9F9888-3C06-4D3C-8DE9-7EA01B9DB8EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E9F9888-3C06-4D3C-8DE9-7EA01B9DB8EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E9F9888-3C06-4D3C-8DE9-7EA01B9DB8EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{262F31EA-DB44-4A24-8005-34E9FA903F6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{262F31EA-DB44-4A24-8005-34E9FA903F6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{262F31EA-DB44-4A24-8005-34E9FA903F6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{262F31EA-DB44-4A24-8005-34E9FA903F6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

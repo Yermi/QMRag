@@ -23,6 +23,7 @@ namespace QMRagPipeline.Services
                 ".pdf" => LoadPdfChunksAsync(),
                 ".docx" => LoadWordChunksAsync(),
                 ".txt" => LoadTxtChunksAsync(),
+                ".json" => LoadJsonChunksAsync(),
                 _ => throw new NotSupportedException($"Unsupported file type: {extension}")
             };
         }
@@ -112,5 +113,46 @@ namespace QMRagPipeline.Services
 
             return chunks;
         }
+
+        private async Task<List<DocumentChunk>> LoadJsonChunksAsync()
+        {
+            if (!File.Exists(_filePath))
+                throw new FileNotFoundException($"File not found: {_filePath}");
+
+            var json = await File.ReadAllTextAsync(_filePath);
+
+            var chunks = new List<DocumentChunk>();
+            try
+            {
+                var array = System.Text.Json.JsonSerializer.Deserialize<List<object>>(json);
+                if (array == null || array.Count == 0)
+                    return chunks;
+
+                int position = 0;
+                for (int i = 0; i < array.Count; i += 10)
+                {
+                    var batch = array.Skip(i).Take(10);
+                    var jsonString = System.Text.Json.JsonSerializer.Serialize(batch, new System.Text.Json.JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    });
+
+                    chunks.Add(new DocumentChunk
+                    {
+                        Content = jsonString,
+                        Source = Path.GetFileName(_filePath),
+                        Position = position++
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to parse JSON file", ex);
+            }
+
+            return chunks;
+        }
+
+
     }
 }

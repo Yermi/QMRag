@@ -1,3 +1,5 @@
 /.vs
 /QMRagPipeline/bin
 /QMRagPipeline/obj
+/QMRagPipline.Api/bin
+/QMRagPipline.Api/obj
