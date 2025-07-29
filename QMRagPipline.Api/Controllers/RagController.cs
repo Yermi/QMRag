@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QMRagPipeline.Services;
+using QMRagPipline.Api.Filters;
 
 namespace QMRagPipline.Api.Controllers
 {
@@ -22,9 +23,12 @@ namespace QMRagPipline.Api.Controllers
         }
 
         [HttpGet("ask")]
+        [SessionId]
         public async Task<IActionResult> Ask([FromQuery] string question)
         {
-            var result = await _runner.AnswerQuestionAsync(question);
+            var sessionId = HttpContext.Items["SessionId"]?.ToString()!;
+
+            var result = await _runner.AnswerQuestionAsync(question, sessionId);
             return Ok(new { answer = result });
         }
     }

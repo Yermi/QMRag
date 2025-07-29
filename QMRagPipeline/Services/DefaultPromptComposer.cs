@@ -53,8 +53,8 @@ namespace QMRagPipeline.Services
                 }
             }
 
-            //if (chatHistory != null)
-            //    result.AddRange(chatHistory);
+            if (chatHistory != null)
+                result.AddRange(chatHistory);
 
             result.Add(new ChatTurn
             {

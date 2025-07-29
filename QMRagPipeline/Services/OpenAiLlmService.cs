@@ -22,7 +22,7 @@ namespace QMRagPipeline.Services
         {
             var messages = MapToChatMessages(promptTurns);
 
-            var response = await _client.CompleteChatAsync(messages);
+            var response = await _client.CompleteChatAsync(messages, new ChatCompletionOptions { Temperature = 0.3f});
             return response.Value?.Content?.FirstOrDefault()?.Text ?? "No answer generated.";
         }
 
