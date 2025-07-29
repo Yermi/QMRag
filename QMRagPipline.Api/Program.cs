@@ -62,16 +62,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-//var pipeline = app.Services.GetRequiredService<RagPipelineRunner>();
-//await pipeline.BuildIndexAsync();
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 logger.LogInformation("Application started");
-
-using (var scope = app.Services.CreateScope())
-{
-    var pipeline = scope.ServiceProvider.GetRequiredService<RagPipelineRunner>();
-    await pipeline.BuildIndexAsync();
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

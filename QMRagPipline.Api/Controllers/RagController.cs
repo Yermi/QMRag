@@ -14,6 +14,13 @@ namespace QMRagPipline.Api.Controllers
             _runner = runner;
         }
 
+        [HttpGet("build")]
+        public async Task<IActionResult> BuildIndex()
+        {
+            await _runner.BuildIndexAsync();
+            return NoContent();
+        }
+
         [HttpGet("ask")]
         public async Task<IActionResult> Ask([FromQuery] string question)
         {
