@@ -1,4 +1,5 @@
-﻿using QMRagPipeline.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using QMRagPipeline.Interfaces;
 using QMRagPipeline.Models;
 
 namespace QMRagPipeline.Services
@@ -10,6 +11,7 @@ namespace QMRagPipeline.Services
         private readonly ISimilaritySearch _similaritySearch;
         private readonly IPromptComposer _promptComposer;
         private readonly ILlmService _llmService;
+        private readonly ILogger<RagPipelineRunner> _logger;
 
         private List<EmbeddedChunk> _embeddedChunks = new();
 
@@ -19,23 +21,25 @@ namespace QMRagPipeline.Services
             IEmbeddingService embeddingService,
             ISimilaritySearch similaritySearch,
             IPromptComposer promptComposer,
-            ILlmService llmService)
+            ILlmService llmService,
+            ILogger<RagPipelineRunner> logger)
         {
             _dataLoader = dataLoader;
             _embeddingService = embeddingService;
             _similaritySearch = similaritySearch;
             _promptComposer = promptComposer;
             _llmService = llmService;
+            _logger = logger;
         }
 
 
         public async Task BuildIndexAsync()
         {
-            Console.WriteLine("[INFO] Loading documents...");
+            _logger.LogInformation("[INFO] Loading documents...");
     
             var chunks = await _dataLoader.LoadChunksAsync();
 
-            Console.WriteLine($"[INFO] Generating embeddings for {chunks.Count} chunks...");
+            _logger.LogInformation($"[INFO] Generating embeddings for {chunks.Count} chunks...");
     
             var embedded = new List<EmbeddedChunk>();
 
@@ -43,7 +47,7 @@ namespace QMRagPipeline.Services
             foreach (var chunk in chunks)
             {
                 var embedding = await _embeddingService.GetEmbeddingAsync(chunk.Content);
-                Console.WriteLine($"[INFO] embeddings for chunk num: {index++} has created...");
+                _logger.LogInformation($"[INFO] embeddings for chunk num: {index++} has created...");
 
                 embedded.Add(new EmbeddedChunk
                 {
@@ -55,7 +59,7 @@ namespace QMRagPipeline.Services
             _embeddedChunks = embedded;
             await _similaritySearch.IndexAsync(embedded);
 
-            Console.WriteLine("[INFO] Index built successfully.");
+            _logger.LogInformation("[INFO] Index built successfully.");
         }
 
         public async Task<string> AnswerQuestionAsync(string question)

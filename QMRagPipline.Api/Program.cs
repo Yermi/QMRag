@@ -10,6 +10,8 @@ builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 builder.Services.Configure<OpenAiSettings>(builder.Configuration.GetSection("OpenAi"));
 builder.Services.Configure<DataSourceSettings>(builder.Configuration.GetSection("DataSource"));
@@ -59,6 +61,8 @@ var app = builder.Build();
 
 //var pipeline = app.Services.GetRequiredService<RagPipelineRunner>();
 //await pipeline.BuildIndexAsync();
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Application started");
 
 using (var scope = app.Services.CreateScope())
 {
