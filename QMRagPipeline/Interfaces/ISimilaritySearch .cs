@@ -4,7 +4,7 @@ namespace QMRagPipeline.Interfaces
 {
     public interface ISimilaritySearch
     {
-        void Index(List<EmbeddedChunk> chunks);
-        List<EmbeddedChunk> Search(float[] queryEmbedding, int topK = 5);
+        Task IndexAsync(List<EmbeddedChunk> chunks);
+        Task<List<EmbeddedChunk>> SearchAsync(float[] queryEmbedding, int topK = 5);
     }
 }

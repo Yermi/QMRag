@@ -7,14 +7,16 @@ namespace QMRagPipeline.Services
     {
         private List<EmbeddedChunk> _index = new();
 
-        public void Index(List<EmbeddedChunk> chunks)
+        public Task IndexAsync(List<EmbeddedChunk> chunks)
         {
             _index = chunks;
+            return Task.CompletedTask;
         }
 
-        public List<EmbeddedChunk> Search(float[] queryEmbedding, int topK = 5)
+
+        public Task<List<EmbeddedChunk>> SearchAsync(float[] queryEmbedding, int topK = 5)
         {
-            return _index
+            var results = _index
                 .Select(chunk => new
                 {
                     Chunk = chunk,
@@ -24,6 +26,8 @@ namespace QMRagPipeline.Services
                 .Take(topK)
                 .Select(x => x.Chunk)
                 .ToList();
+
+            return Task.FromResult(results);
         }
 
         private float CosineSimilarity(float[] a, float[] b)

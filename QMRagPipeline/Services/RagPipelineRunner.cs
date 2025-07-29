@@ -50,7 +50,7 @@ namespace QMRagPipeline.Services
             }
 
             _embeddedChunks = embedded;
-            _similaritySearch.Index(embedded);
+            await _similaritySearch.IndexAsync(embedded);
 
             Console.WriteLine("[INFO] Index built successfully.");
         }
@@ -58,7 +58,7 @@ namespace QMRagPipeline.Services
         public async Task<string> AnswerQuestionAsync(string question)
         {
             var questionEmbedding = await _embeddingService.GetEmbeddingAsync(question);
-            var topChunks = _similaritySearch.Search(questionEmbedding, topK: 5);
+            var topChunks = await _similaritySearch.SearchAsync(questionEmbedding, topK: 5);
 
             var prompt = _promptComposer.ComposePrompt(question, topChunks);
             var answer = await _llmService.GetAnswerAsync(prompt);

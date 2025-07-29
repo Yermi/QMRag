@@ -14,9 +14,16 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 
-//builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDb"));
 builder.Services.Configure<OpenAiSettings>(builder.Configuration.GetSection("OpenAi"));
 builder.Services.Configure<DataSourceSettings>(builder.Configuration.GetSection("DataSource"));
+builder.Services.Configure<QdrantSettings>(builder.Configuration.GetSection("Qdrant"));
+
+builder.Services.AddHttpClient<ISimilaritySearch, QdrantRestSimilaritySearch>((sp, client) =>
+{
+    var settings = sp.GetRequiredService<IOptions<QdrantSettings>>().Value;
+    client.BaseAddress = new Uri(settings.Url);
+    client.DefaultRequestHeaders.Add("api-key", settings.ApiKey);
+});
 
 builder.Services.AddSingleton<OpenAIClient>(sp =>
 {
@@ -31,7 +38,7 @@ builder.Services.AddScoped<IDataLoader>(sp =>
     return new FileDocumentDataLoader(filePath);
 });
 builder.Services.AddScoped<IEmbeddingService, OpenAiEmbeddingService>();
-builder.Services.AddScoped<ISimilaritySearch, InMemorySimilaritySearch>();
+//builder.Services.AddScoped<ISimilaritySearch, QdrantRestSimilaritySearch>();
 builder.Services.AddSingleton<IPromptComposer, DefaultPromptComposer>();
 builder.Services.AddSingleton<ILlmService, OpenAiLlmService>();
 builder.Services.AddSingleton<RagPipelineRunner>();
