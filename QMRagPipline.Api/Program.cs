@@ -3,22 +3,32 @@ using OpenAI;
 using QMRagPipeline.Interfaces;
 using QMRagPipeline.Services;
 using QMRagPipeline.Settings;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load settings configs into configurations
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true);
 
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+// set logging
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .Enrich.FromLogContext()
+    .CreateLogger();
 
+builder.Host.UseSerilog();
+
+// set configurations
 builder.Services.Configure<OpenAiSettings>(builder.Configuration.GetSection("OpenAi"));
 builder.Services.Configure<DataSourceSettings>(builder.Configuration.GetSection("DataSource"));
 builder.Services.Configure<QdrantSettings>(builder.Configuration.GetSection("Qdrant"));
+
+// register services
 builder.Services.AddHttpClient<ISimilaritySearch, QdrantRestSimilaritySearch>((sp, client) =>
 {
     var settings = sp.GetRequiredService<IOptions<QdrantSettings>>().Value;
@@ -42,8 +52,6 @@ builder.Services.AddScoped<IEmbeddingService, OpenAiEmbeddingService>();
 builder.Services.AddScoped<IPromptComposer, DefaultPromptComposer>();
 builder.Services.AddScoped<ILlmService, OpenAiLlmService>();
 builder.Services.AddScoped<RagPipelineRunner>();
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
