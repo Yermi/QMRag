@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMRagPipeline", "QMRagPipeline\QMRagPipeline.csproj", "{9E9F9888-3C06-4D3C-8DE9-7EA01B9DB8EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nubo.Chat.RagPipeline", "Nubo.Chat.RagPipeline\Nubo.Chat.RagPipeline.csproj", "{9E9F9888-3C06-4D3C-8DE9-7EA01B9DB8EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMRagPipline.Api", "QMRagPipline.Api\QMRagPipline.Api.csproj", "{262F31EA-DB44-4A24-8005-34E9FA903F6D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nubo.Chat.Api", "Nubo.Chat.Api\Nubo.Chat.Api.csproj", "{262F31EA-DB44-4A24-8005-34E9FA903F6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

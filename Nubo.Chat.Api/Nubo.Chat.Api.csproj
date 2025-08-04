@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QMRagPipeline\QMRagPipeline.csproj" />
+    <ProjectReference Include="..\Nubo.Chat.RagPipeline\Nubo.Chat.RagPipeline.csproj" />
   </ItemGroup>
 
 </Project>

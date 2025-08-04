@@ -38,7 +38,7 @@ namespace QMRagPipeline.Services
             {
                 Role = AuthorRole.System,
                 Content = "You are a helpful assistant that answers only based on the given context. " +
-                      "If the answer is not in the context, respond: 'I don't know.'"
+                      "If the answer is not in the context, respond: 'This is not in context of my knowledge'"
             });
 
             foreach (var chunk in contextChunks)

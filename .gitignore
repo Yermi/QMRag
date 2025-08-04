@@ -1,6 +1,6 @@
 /.vs
-/QMRagPipeline/bin
-/QMRagPipeline/obj
-/QMRagPipline.Api/bin
-/QMRagPipline.Api/obj
-/QMRagPipline.Api/appsettings.Development.json
+/Nubo.Chat.RagPipeline/bin
+/Nubo.Chat.RagPipeline/obj
+/Nubo.Chat.Api/bin
+/Nubo.Chat.Api/obj
+/Nubo.Chat.Api/appsettings.Development.json
